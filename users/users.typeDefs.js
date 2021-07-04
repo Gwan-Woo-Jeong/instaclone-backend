@@ -9,10 +9,7 @@ export default gql`
     email: String!
     createdAt: String!
     updatedAt: String!
-  }
-  type LoginResult {
-    ok: Boolean!
-    token: String
-    error: String
+    bio: String
+    avatar: String
   }
 `;
