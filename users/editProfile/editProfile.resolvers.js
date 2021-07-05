@@ -1,6 +1,7 @@
 import client from '../../client';
 import bcrypt from "bcrypt";
 import { protectedResolver } from '../users.utils';
+import { createWriteStream } from "fs";
 
 export default {
     Mutation: {
@@ -14,9 +15,17 @@ export default {
                     password: newPassword,
                     bio,
                     avatar
-                }, { loggedInUser, protectResolver }
+                }, { loggedInUser }
             ) => {
-                console.log(avatar);
+                let avatarUrl = null;
+                if (avatar) {
+                    const { filename, createReadStream } = await avatar;
+                    const newFilename = `${loggedInUser.id}-${Date.now()}-${filename}`
+                    const readStream = createReadStream();
+                    const writeStream = createWriteStream(process.cwd() + "/uploads/" + newFilename);
+                    readStream.pipe(writeStream);
+                    avatarUrl = `http://localhost:4000/static/${newFilename}`;
+                }
                 let uglyPassword = null;
                 if (newPassword) {
                     uglyPassword = await bcrypt.hash(newPassword, 10);
@@ -29,7 +38,8 @@ export default {
                         username,
                         email,
                         bio,
-                        ...(uglyPassword && { password: uglyPassword })
+                        ...(uglyPassword && { password: uglyPassword }),
+                        ...(avatarUrl && { avatar: avatarUrl }),
                     }
                 });
                 if (updatedUser.id) {
