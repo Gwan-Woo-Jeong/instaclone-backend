@@ -23,12 +23,7 @@ const resolvers: Resolvers = {
           },
         },
       }),
-    isMe: ({ id }, _, { loggedInUser }) => {
-      if (!loggedInUser) {
-        return false;
-      }
-      return id === loggedInUser.id;
-    },
+    isMe: ({ id }, _, { loggedInUser }) => id === loggedInUser?.id,
     isFollowing: async ({ id }, _, { loggedInUser }) => {
       if (!loggedInUser) {
         return false;

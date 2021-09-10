@@ -14,6 +14,9 @@ const resolvers: Resolvers = {
           },
         },
       }),
+    likes: ({ id }) => client.like.count({ where: { photoId: id } }),
+    comments: ({ id }) => client.comment.count({ where: { photoId: id } }),
+    isMine: ({ userId }, _, { loggedInUser }) => userId === loggedInUser?.id,
   },
   Hashtag: {
     photos: ({ id }, { page }, { loggedInUser }) => {
