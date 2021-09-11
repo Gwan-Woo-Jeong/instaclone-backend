@@ -1,6 +1,7 @@
 import client from "../../client";
 import { Resolvers } from "../../types";
 import { protectedResolver } from "../../users/users.utils";
+import { PrismaDelete } from "@paljs/plugins";
 
 const resolvers: Resolvers = {
   Mutation: {
@@ -19,7 +20,14 @@ const resolvers: Resolvers = {
         return { ok: false, error: "Not authorized" };
         // 정상적으로 삭제 가능
       } else {
-        await client.photo.delete({ where: { id } });
+        // photo를 참조하는 다른 테이블의 레코드 모두 삭제 (Hashtag, Like, Comment)
+        const prismaDelete = new PrismaDelete(client);
+        await prismaDelete.onDelete({
+          model: "Photo",
+          where: { id },
+          // 하위 항목 뿐만 아니라 자기 자신도 삭제
+          deleteParent: true,
+        });
         return { ok: true };
       }
     }),
