@@ -23,13 +23,25 @@ export const getUser = async (token) => {
   }
 };
 
+/*
+  protectedResolver이 {ok, error}를 리턴하기 때문에, mutation에서는 문제가 없었지만 (typeDefs에서 예상)
+  query에선 이 결과를 기대하지 않기 때문에, 에러가 났음. 따라서, info라는 속성을 이용하여 분기를 해주어 다른 값을 리턴
+*/
+
 export const protectedResolver =
   (ourResolver: Resolver) => (root, args, context, info) => {
     if (!context.loggedInUser) {
-      return {
-        ok: false,
-        error: "Please log in to perform this action.",
-      };
+      const query = info.operation.operation === "query";
+      // 요청이 query일 경우
+      if (query) {
+        return null;
+      // mutation일 경우
+      } else {
+        return {
+          ok: false,
+          error: "Please log in to perform this action.",
+        };
+      }
     }
     return ourResolver(root, args, context, info);
   };
