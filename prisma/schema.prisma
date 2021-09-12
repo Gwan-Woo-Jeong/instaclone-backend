@@ -26,6 +26,9 @@ model User {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   comments  Comment[]
+  // N : N - 유저 : 대화방
+  rooms     Room[]
+  Message   Message[]
 }
 
 model Photo {
@@ -73,4 +76,29 @@ model Comment {
   updatedAt DateTime @updatedAt
   userId    Int
   photoId   Int
+}
+
+model Room {
+  id        Int       @id @default(autoincrement())
+  // N : N - 유저 : 대화방 (여러 대화방에 여러 유저가 참여할 수 있음)
+  users     User[]
+  // 메시지는 대화방에 속함
+  messages  Message[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  // 메시지 내용
+  payload   String
+  // 메시지를 보낸 유저
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  // 메시지를 보낸 대화방
+  room      Room     @relation(fields: [roomId], references: [id])
+  roomId    Int
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
