@@ -1,4 +1,6 @@
 import client from "../../client";
+import { NEW_MESSAGE } from "../../constants";
+import pubsub from "../../pubsub";
 import { Resolvers } from "../../types";
 import { protectedResolver } from "../../users/users.utils";
 
@@ -42,7 +44,7 @@ const resolvers: Resolvers = {
         }
         // ** 위에서 user와 room을 찾음
         // 새로운 메시지 생성
-        await client.message.create({
+        const message = await client.message.create({
           data: {
             // 메시지 내용
             payload,
@@ -52,6 +54,8 @@ const resolvers: Resolvers = {
             user: { connect: { id: loggedInUser.id } },
           },
         });
+        //! publish되는 이벤트의 payload는 Subscription의 이름 + 리턴 타입이어야 함
+        pubsub.publish(NEW_MESSAGE, { roomUpdates: { ...message } });
         return { ok: true };
       }
     ),
