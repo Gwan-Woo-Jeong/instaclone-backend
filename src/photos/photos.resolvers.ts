@@ -17,6 +17,27 @@ const resolvers: Resolvers = {
     likes: ({ id }) => client.like.count({ where: { photoId: id } }),
     comments: ({ id }) => client.comment.count({ where: { photoId: id } }),
     isMine: ({ userId }, _, { loggedInUser }) => userId === loggedInUser?.id,
+    // photo의 id와 로그인 유저의 id를 가져옴
+    isLiked: async ({ id }, _, { loggedInUser }) => {
+      // 비로그인이면
+      if (!loggedInUser) {
+        // 로그인이 되지 않았으므로 좋아요 X
+        return false;
+      }
+      // photoId = id 이고 userId = 로그인 유저 id인 like를 찾음
+      const ok = await client.like.findUnique({
+        where: { photoId_userId: { photoId: id, userId: loggedInUser.id } },
+        // 존재만 찾기 때문에 id만 뽑아옴
+        select: { id: true },
+      });
+      // 있으면
+      if (ok) {
+        // 좋아요 했음
+        return true;
+      }
+      // 없으면, 좋아요 안했음
+      return false;
+    },
   },
   Hashtag: {
     photos: ({ id }, { page }, { loggedInUser }) => {
