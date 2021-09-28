@@ -19,7 +19,7 @@ const resolvers: Resolvers = {
           return { ok: false, error: "Photo not found" };
         }
         // 일치하는 photo가 있으면, comment를 생성
-        await client.comment.create({
+        const newComment = await client.comment.create({
           data: {
             // comment의 내용
             payload,
@@ -30,7 +30,8 @@ const resolvers: Resolvers = {
           },
         });
         // 요청 성공
-        return { ok: true };
+        // + id를 리턴
+        return { ok: true, id: newComment.id };
       }
     ),
   },

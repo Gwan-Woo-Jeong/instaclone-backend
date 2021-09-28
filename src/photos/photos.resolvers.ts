@@ -15,7 +15,13 @@ const resolvers: Resolvers = {
         },
       }),
     likes: ({ id }) => client.like.count({ where: { photoId: id } }),
-    comments: ({ id }) => client.comment.count({ where: { photoId: id } }),
+    commentNumber: ({ id }) => client.comment.count({ where: { photoId: id } }),
+    // photoId가 일치하는 comment와 함께 user 정보까지 추가
+    comments: ({ id }) =>
+      client.comment.findMany({
+        where: { photoId: id },
+        include: { user: true },
+      }),
     isMine: ({ userId }, _, { loggedInUser }) => userId === loggedInUser?.id,
     // photo의 id와 로그인 유저의 id를 가져옴
     isLiked: async ({ id }, _, { loggedInUser }) => {

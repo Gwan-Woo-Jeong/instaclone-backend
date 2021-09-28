@@ -7,7 +7,7 @@ export default gql`
     photo: Photo!
     payload: String!
     isMine: Boolean!
-    createAt: String!
+    createdAt: String!
     updatedAt: String!
   }
 `;
