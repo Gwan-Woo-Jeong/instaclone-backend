@@ -56,7 +56,7 @@ const resolvers: Resolvers = {
         });
         //! publish되는 이벤트의 payload는 Subscription의 이름 + 리턴 타입이어야 함
         pubsub.publish(NEW_MESSAGE, { roomUpdates: { ...message } });
-        return { ok: true };
+        return { ok: true, id: message.id };
       }
     ),
   },
