@@ -21,8 +21,32 @@ const resolvers: Resolvers = {
         },
         { loggedInUser }
       ) => {
+        if (firstName.length < 1) {
+          return {
+            ok: false,
+            error: "Enter your first name.",
+          };
+        } else if (username.length < 5) {
+          return {
+            ok: false,
+            error: "User name must be longer than 4 characters.",
+          };
+        } else if (email.length < 1) {
+          return {
+            ok: false,
+            error: "Enter your E-mail.",
+          };
+        } else if (newPassword.length < 5) {
+          return {
+            ok: false,
+            error: "Password must be longer than 4 characters.",
+          };
+        }
         let avatarUrl = null;
-        if (avatar) {
+        let setDefaultAvatar = false;
+        if (avatar === "default") {
+          setDefaultAvatar = true;
+        } else if (avatar && avatar !== "existing") {
           // uploadToS3에서 S3에 사진을 업로드 한 후, 파일 경로를 리턴
           avatarUrl = await uploadToS3(avatar, loggedInUser.id, "avatars");
           /* const { filename, createReadStream } = await avatar;
@@ -48,6 +72,7 @@ const resolvers: Resolvers = {
             bio,
             ...(uglyPassword && { password: uglyPassword }),
             ...(avatarUrl && { avatar: avatarUrl }),
+            ...(setDefaultAvatar && { avatar: null }),
           },
         });
         if (updatedUser.id) {
