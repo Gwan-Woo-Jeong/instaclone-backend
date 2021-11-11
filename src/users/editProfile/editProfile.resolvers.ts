@@ -1,7 +1,6 @@
 import client from "../../client";
 import bcrypt from "bcrypt";
 import { protectedResolver } from "../users.utils";
-import { createWriteStream } from "fs";
 import { Resolvers } from "../../types";
 import { uploadToS3 } from "../../shared/shared.utils";
 
