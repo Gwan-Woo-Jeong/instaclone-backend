@@ -7,7 +7,8 @@
     "migrate": "npx prisma migrate dev",
     "studio": "npx prisma studio",
     "preinstall": "npx npm-force-resolutions",
-    "build": "babel src --out-dir build"
+    "build": "babel src --out-dir build",
+    "start": "node build/server"
   },
   "repository": {
     "type": "git",
