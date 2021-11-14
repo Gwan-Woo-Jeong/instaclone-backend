@@ -8,7 +8,7 @@
     "studio": "npx prisma studio",
     "preinstall": "npx npm-force-resolutions",
     "build": "babel src --out-dir build",
-    "start": "node build/server"
+    "start": "node build/server.js"
   },
   "repository": {
     "type": "git",
